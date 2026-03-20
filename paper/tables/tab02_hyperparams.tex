@@ -1,0 +1,41 @@
+\begin{table*}[!tbp]
+\centering
+\caption{Core hyperparameters, interface dimensions, and environment settings used in release experiments.}
+\label{tab:hyperparams}
+
+\begin{adjustbox}{width=\linewidth}
+\begin{tabularx}{\linewidth}{@{}lXl@{}}
+\toprule
+\textbf{Parameter} & \textbf{Value} & \textbf{Scope} \\
+\midrule
+Observation schema & Dict:\;market/portfolio/mask/flat & Environment \\
+Observation window & 24 bars & Environment \\
+Portfolio vector dimension & 10 & Environment \\
+Action outputs ($n_a$) & 10 (extended) or 3 (simplified) & Agent/Environment \\
+Flat input dimension & $24\,d_{\mathrm{feat}} + 10 + n_a$ & Agent \\
+Q-network architecture & MLP [512, 512, 256] + ReLU + linear head & Agent \\
+Total timesteps & 1,000,000 & Training \\
+Replay buffer size & 40,000 & Training \\
+Batch size & 128 & Training \\
+Learn start & 10,000 steps & Training \\
+Learn frequency & every 4 steps & Training \\
+$\gamma$ & 0.99 & Training \\
+Optimizer & Adam (2.5e-4) & Agent \\
+Epsilon schedule & 1.0$\rightarrow$0.01 (30K) & Agent \\
+Target update interval & 2,000 steps & Agent \\
+Gradient clip & 10.0 & Agent \\
+Periodic diagnostic evaluation & every 10,000 steps (default) & Training \\
+Automatic mixed precision (AMP) dtype & fp16 & Agent \\
+Initial capital & USD 100,000 & Environment \\
+Max leverage & 30x & Environment \\
+Liquidation threshold & 25\% equity & Environment \\
+Commission & USD 3.5 / lot (round trip) & Environment \\
+Base slippage & 0.5 pips & Environment \\
+Seed & See Section~\ref{sec:experiments} & Reproducibility \\
+Temporal split & 80/20 chronological & Reproducibility \\
+\bottomrule
+\end{tabularx}
+\end{adjustbox}
+\end{table*}
+
+

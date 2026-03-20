@@ -1,0 +1,42 @@
+\section{Full Hyperparameter Configuration}
+\label{app:hyperparams}
+
+This appendix records the core configuration used across the release experiments. Main-paper values are summarized in \Cref{tab:hyperparams}; this appendix clarifies which settings were held constant and which were varied by experiment-family YAML overrides.
+
+\subsection{Shared Training Settings}
+\begin{itemize}[leftmargin=1.4em]
+	\item Total timesteps: 1,000,000
+	\item Replay buffer size: 40,000
+	\item Batch size: 128
+	\item Learn start: 10,000 steps
+	\item Learn frequency: every 4 environment steps
+	\item Discount factor: $\gamma=0.99$
+	\item Optimizer: Adam ($2.5\times 10^{-4}$)
+	\item Gradient clip: 10.0
+	\item Epsilon schedule: $1.0\rightarrow0.01$ over 30,000 steps
+	\item Target update interval: 2,000 learning steps
+	\item Mixed precision: fp16
+\end{itemize}
+
+\subsection{Environment and Risk Settings}
+\begin{itemize}[leftmargin=1.4em]
+	\item Observation window: 24 bars
+	\item Initial capital: USD 100,000
+	\item Maximum leverage: 30x
+	\item Maintenance margin ratio: 50\% of initial margin
+	\item Liquidation threshold: 25\% of initial capital
+	\item Commission: USD 3.5 per lot (round trip equivalent)
+	\item Base deterministic slippage: 0.5 pips
+	\item Rollover timestamp: 22:00 UTC (triple rollover Wednesday)
+\end{itemize}
+
+\subsection{Experiment-Family Overrides}
+\begin{itemize}[leftmargin=1.4em]
+	\item \Exp{01}: reward-component enable/disable schedule (\variant{r1}--\variant{r7})
+	\item \Exp{02}: action-mode switch (simplified vs extended)
+	\item \Exp{03}: scaling action availability (none, pyramid, martingale, both)
+% Exp04/Exp05 (friction/stress families) removed from retained manuscript scope
+\end{itemize}
+
+\subsection{Determinism Scope}
+All reported runs in this manuscript used a fixed seed; see Section~\ref{sec:experiments} for the canonical seed value and related reproducibility details. This setting ensures deterministic reproducibility of the presented artifact snapshots but does not capture between-seed uncertainty.

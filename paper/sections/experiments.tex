@@ -1,0 +1,49 @@
+\section{Experimental Design}
+\label{sec:experiments}
+
+This section specifies the controlled evaluation protocol used to answer \RQ{1}--\RQ{3}. We first define scope and invariants, then map each experiment family to a research question, and finally describe metrics, statistical procedures, and reproducibility controls.
+
+\subsection{Dataset Scope and Split Policy}
+The primary controlled families (\Exp{01}--\Exp{03}) are executed on hourly EURUSD training-split data with Double DQN~\citep{hasselt2016deep} to isolate component effects under a fixed optimization budget. We additionally report contextual robustness analyses (benchmark and cross-pair comparisons) from the same artifact generation pipeline to calibrate the practical relevance of the primary findings.
+
+\input{tables/tab01_dataset}
+
+\noindent The dataset table clarifies that all pairs share an aligned chronological split policy, allowing pair-level comparisons without confounding differences in temporal coverage.
+
+\subsection{Experiment Families and Contextual Extensions}
+All studies are executed via configuration-only overrides using YAML (YAML Ain't Markup Language) files, with no structural code changes:
+\begin{itemize}[leftmargin=1.4em]
+	\item \textbf{\Exp{01} Reward ablation}: cumulative reward component schedule \variant{r1} to \variant{r7}.
+	\item \textbf{\Exp{02} Action space}: simplified (3-action adapter) vs extended (10-action).
+	\item \textbf{\Exp{03} Scaling analysis}: no scaling, pyramid-only, martingale-only, both.
+    \item \textbf{Context A (benchmark calibration)}: RL agents compared against random, buy-and-hold, momentum, and mean-reversion baselines under identical simulator semantics.
+    \item \textbf{Context B (cross-pair transfer diagnostics)}: DQN vs. Double DQN comparisons on GBPUSD, USDJPY, and AUDUSD using the full reward profile.
+\end{itemize}
+All families inherit the same anti-lookahead timing rule, transaction-friction model, and margin constraints, ensuring that observed differences arise from controlled design changes rather than simulator drift.
+
+\subsection{Protocol Invariants and Hyperparameter Budget}
+To preserve comparability, core optimization and environment settings are held constant across families unless a specific family intentionally perturbs that axis. These shared values are summarized in \Cref{tab:hyperparams}.
+
+\input{tables/tab02_hyperparams}
+
+\noindent Fixing this budget is especially important when interpreting action-space and scaling effects, because it prevents confounding from unequal replay exposure or optimizer aggressiveness.
+
+\subsection{Research Questions}
+Each experiment family is explicitly tied to a research question that guides design choices and governs interpretation of outcomes:
+\begin{description}[leftmargin=1.8em, style=nextline]
+    \item[\textbf{RQ1} (Reward Interactions):] Do reward components interact non-monotonically, and does progressive penalty activation improve or degrade training-period risk-adjusted return compared to a bare profit signal? (\Exp{01})
+	\item[\textbf{RQ2} (Action Granularity):] How does the extended 10-action interface change return, risk-adjusted performance, drawdown, and turnover relative to the 3-action coarse adapter? (\Exp{02})
+    \item[\textbf{RQ3} (Scaling Asymmetry):] Is the $2.4\times$ martingale-to-pyramid penalty ratio sufficient to produce meaningfully asymmetric position-management behavior, with pyramid-only variants outperforming martingale-only on drawdown? (\Exp{03})
+\end{description}
+Context A and Context B are interpreted as calibration analyses rather than additional primary RQs; they are used to situate the main EURUSD findings against stronger baselines and pair variation.
+
+\subsection{Metrics and Statistical Testing}
+Evaluation captures profitability, risk, and behavior: cumulative return, annualized return/volatility, Sharpe~\citep{sharpe1994sharpe}, Sortino~\citep{sortino1994performance}, maximum drawdown, win rate, turnover, liquidation metrics, and scaling utilization. For paired model comparisons, paired outcomes are reported descriptively; no inferential hypothesis testing is performed.
+
+Because all reported values are endpoint artifacts, we emphasize effect patterns and relative trade-offs over formal claims of distributional superiority; see Section~\ref{sec:experiments} for canonical seeding and evaluation scope, consistent with current cautionary guidance in trading-RL evaluation practice \citep{zhang2020deep}.
+
+\subsection{Reproducibility Protocol}
+Reproducibility controls include deterministic seeding across Python/NumPy/PyTorch/environment, resolved-config snapshots stored per run, canonical artifact paths, and strict chronological splitting. Numerical findings in this manuscript are therefore directly traceable to saved outputs. This protocol is aligned with reproducibility priorities emphasized in prior trading-RL benchmark literature~\citep{liu2021finrl,zhang2020deep}.
+
+\paragraph{Important scope note.}
+This release reports \emph{single-seed} outcomes (seed $42$). Accordingly, we interpret differences as informative system-behavior evidence rather than definitive estimates of expected out-of-sample superiority.

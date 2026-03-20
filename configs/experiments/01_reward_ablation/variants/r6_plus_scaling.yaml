@@ -1,0 +1,23 @@
+# Profit + transaction + drawdown + volatility + overtrading + scaling
+reward:
+  components:
+    profit:
+      enabled: true
+    holding:
+      enabled: false
+    volatility:
+      enabled: true
+    drawdown:
+      enabled: true
+    transaction:
+      enabled: true
+    overtrading:
+      enabled: true
+    scaling:
+      enabled: true
+    margin:
+      enabled: false
+    liquidation:
+      enabled: false
+    constraint_violation:
+      enabled: false

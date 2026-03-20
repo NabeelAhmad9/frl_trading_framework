@@ -1,0 +1,5 @@
+benchmark:
+  name: random_policy
+  description: Random legal action selection with seed control
+  policy: random
+  random_seed: 42

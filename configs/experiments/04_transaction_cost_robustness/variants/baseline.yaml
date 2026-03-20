@@ -1,0 +1,4 @@
+# Baseline transaction costs (1x)
+environment:
+  transaction_costs:
+    cost_multiplier: 1.0

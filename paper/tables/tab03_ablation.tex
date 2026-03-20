@@ -1,0 +1,23 @@
+\begin{table*}[!tbp]
+\centering
+\caption{Reward ablation on EURUSD train split (Double DQN; see Section~\ref{sec:experiments}).}
+\label{tab:ablation_train}
+
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{lrrrrrrrr}
+\toprule
+\textbf{Variant} & \textbf{Sharpe} & \textbf{Sortino} & \textbf{Cum.Ret(\%)} & \textbf{MaxDD(\%)} & \textbf{WinRate(\%)} & \textbf{Turnover} & \textbf{AvgPyr} & \textbf{AvgMart} \\
+\midrule
+\variant{r1} & 0.412 & 0.573 & 27.79 & 10.48 & 35.18 & 1592.83 & 0.113 & 0.121 \\
+\variant{r2} & 0.237 & 0.353 & 12.20 & 8.60 & 31.85 & 1741.58 & 0.187 & 0.127 \\
+\variant{r3} & 0.638 & 0.979 & 41.20 & 5.44 & 31.53 & 1488.67 & 0.165 & 0.138 \\
+\variant{r4} & 0.687 & 1.029 & 43.21 & 5.68 & 30.99 & 1344.47 & 0.197 & 0.144 \\
+\variant{r5} & 0.589 & 0.822 & 41.74 & 4.12 & 31.07 & 1350.00 & 0.172 & 0.156 \\
+\variant{r6} & 0.410 & 0.539 & 24.58 & 7.70 & 27.38 & 1200.32 & 0.132 & 0.089 \\
+\variant{r7} & 0.765 & 1.117 & 57.09 & 2.31 & 33.15 & 1156.51 & 0.173 & 0.169 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}
+
+

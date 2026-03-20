@@ -1,0 +1,4 @@
+# Extended 10-action mode (baseline)
+environment:
+  actions:
+    simplified_mode: false

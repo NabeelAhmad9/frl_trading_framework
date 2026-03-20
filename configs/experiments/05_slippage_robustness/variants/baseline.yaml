@@ -1,0 +1,4 @@
+# Baseline slippage (1x)
+environment:
+  slippage:
+    base_slippage_pips: 0.5

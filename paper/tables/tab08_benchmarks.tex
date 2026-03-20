@@ -1,0 +1,21 @@
+\begin{table}[!tbp]
+\centering
+\caption{Benchmark risk diagnostics on EURUSD (see Section~\ref{sec:experiments}).}
+\label{tab:benchmark_risk}
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\textbf{Method} & \textbf{Ann.Ret(\%)} & \textbf{Ann.Vol(\%)} & \textbf{Sortino} & \textbf{Trades} \\
+\midrule
+Random Policy & -12.11 & 0.96 & -16.523 & 13728 \\
+Buy-and-Hold & -0.32 & 0.89 & -0.466 & 1 \\
+Momentum & -1.18 & 0.87 & -1.789 & 1715 \\
+Mean-Reversion & -0.51 & 0.63 & -0.772 & 1469 \\
+DQN & 6.36 & 3.37 & 2.643 & 11240 \\
+Double DQN & 14.82 & 4.11 & 4.771 & 8415 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+

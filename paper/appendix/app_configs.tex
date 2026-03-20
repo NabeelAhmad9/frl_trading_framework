@@ -1,0 +1,81 @@
+\section{Resolved YAML Configuration Snapshots}
+\label{app:configs}
+
+This appendix provides representative resolved configurations for reproducibility. Full resolved files are stored in run artifacts under experiment output directories.
+
+\subsection{Ablation Variant \variant{r1} (Profit-Only Core)}
+\begingroup\scriptsize
+\begin{verbatim}
+experiment:
+	family: 01_reward_ablation
+	variant: r1_profit_only
+agent:
+	name: doubledqn
+	model:
+		hidden_dims: [512, 512, 256]
+	training:
+		total_timesteps: 1000000
+		learn_start_steps: 10000
+		learn_frequency: 4
+reward:
+	components:
+		profit: {enabled: true, weight: 1.0}
+		transaction: {enabled: false}
+		drawdown: {enabled: false}
+		volatility: {enabled: false}
+		overtrading: {enabled: false}
+		pyramid_penalty: {enabled: false}
+		martingale_penalty: {enabled: false}
+		holding: {enabled: false}
+		margin: {enabled: false}
+		liquidation: {enabled: false}
+		constraint: {enabled: false}
+training:
+	random_seed: 42
+\end{verbatim}
+\endgroup
+
+\subsection{Ablation Variant \variant{r7} (Full Reward)}
+\begingroup\scriptsize
+\begin{verbatim}
+experiment:
+	family: 01_reward_ablation
+	variant: r7_full
+agent:
+	name: doubledqn
+reward:
+	components:
+		profit: {enabled: true, weight: 1.0}
+		holding: {enabled: true, weight: 0.03}
+		volatility: {enabled: true, weight: 0.01}
+		drawdown: {enabled: true, weight: 0.05}
+		transaction: {enabled: true, weight: 0.10}
+		overtrading: {enabled: true, weight: 0.02}
+		pyramid_penalty: {enabled: true, weight: 0.05}
+		martingale_penalty: {enabled: true, weight: 0.12}
+		margin: {enabled: true, weight: 0.05}
+		liquidation: {enabled: true, weight: 2.0}
+		constraint: {enabled: true, weight: 0.10}
+reward_normalization:
+	mode: clip_only
+	clip_min: -1.0
+	clip_max: 1.0
+training:
+	random_seed: 42
+\end{verbatim}
+\endgroup
+
+\subsection{Action-Space Variants}
+\begingroup\scriptsize
+\begin{verbatim}
+# simplified
+environment:
+	actions:
+		mode: simplified
+
+# extended
+environment:
+	actions:
+		mode: extended
+\end{verbatim}
+\endgroup

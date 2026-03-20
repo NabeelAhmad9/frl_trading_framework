@@ -1,0 +1,23 @@
+# Profit only - all other components disabled
+reward:
+  components:
+    profit:
+      enabled: true
+    holding:
+      enabled: false
+    volatility:
+      enabled: false
+    drawdown:
+      enabled: false
+    transaction:
+      enabled: false
+    overtrading:
+      enabled: false
+    scaling:
+      enabled: false
+    margin:
+      enabled: false
+    liquidation:
+      enabled: false
+    constraint_violation:
+      enabled: false

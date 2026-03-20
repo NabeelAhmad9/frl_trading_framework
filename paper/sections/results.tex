@@ -1,0 +1,133 @@
+\section{Results}
+\label{sec:results}
+
+All values in this section are derived from \emph{training artifacts only} (see Section~\ref{sec:experiments}). We report primary outcomes for \Exp{01}--\Exp{03}, then place them in context using benchmark and cross-pair diagnostics generated under the same simulator semantics.
+
+% ------------------------------------------------------------------
+\subsection{Global Performance Dashboard}
+% ------------------------------------------------------------------
+
+Before unpacking each experiment family, \Cref{fig:metrics_multi_panel} provides a compact multi-metric snapshot of profitability, risk, and behavior indicators used throughout this section.
+
+\begin{figure*}[!tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/metrics_multi_panel.pdf}
+\caption{Multi-panel dashboard of endpoint metrics across retained experiment families, summarizing return, drawdown, risk-adjusted performance, and activity.}
+\label{fig:metrics_multi_panel}
+\end{figure*}
+
+The dashboard confirms that no single configuration dominates all dimensions simultaneously: variants with stronger endpoint return often incur higher activity or weaker conservative risk summaries, reinforcing the need for objective-specific model selection.
+
+% ------------------------------------------------------------------
+\subsection{Reward Component Ablation (\Exp{01})}
+% ------------------------------------------------------------------
+
+\noindent\textbf{Objective.}
+\Exp{01} progressively enables reward components to identify constructive versus destructive interactions.
+
+We first report endpoint statistics in \Cref{tab:ablation_train}, then use distributional and trajectory views to diagnose interaction nonlinearity.
+
+\input{tables/tab03_ablation}
+
+Endpoint values already indicate interaction effects: Sharpe and cumulative return do not improve monotonically with added penalties, and several intermediate variants underperform simpler compositions.
+
+\begin{figure}[!tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/sharpe_ablation.pdf}
+\caption{Reward-ablation comparison for variants \variant{r1}--\variant{r7} on EURUSD, showing a non-monotone profile with \variant{r7} as the strongest endpoint.}
+\label{fig:ablation_bar}
+\end{figure}
+
+\Cref{fig:ablation_bar} makes the non-monotonicity explicit: the sequence deteriorates from \variant{r1} to \variant{r2}, recovers across \variant{r3}--\variant{r5}, softens at \variant{r6}, and peaks at \variant{r7}.
+
+\begin{figure*}[!tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/equity_curves_ablation.pdf}
+\caption{Training equity trajectories for \variant{r1}--\variant{r7}, highlighting non-monotone intermediate behavior and the strongest endpoint for \variant{r7}.}
+\label{fig:equity_curves_ablation}
+\end{figure*}
+
+The trajectory view in \Cref{fig:equity_curves_ablation} corroborates the endpoint summary: the strongest terminal profile is not produced by the earliest penalty additions, but by the fully calibrated composition. This supports the claim that reward engineering is an empirical calibration task rather than a strictly additive design process.
+
+% ------------------------------------------------------------------
+\subsection{Action-Space Comparison (\Exp{02})}
+% ------------------------------------------------------------------
+
+\noindent\textbf{Objective.}
+\Exp{02} compares the extended 10-action interface with the simplified 3-action adapter under matched training settings.
+
+\input{tables/tab04_action_space}
+
+As shown in \Cref{tab:action_space}, the extended interface improves cumulative return while increasing turnover and reducing Sharpe relative to the conservative adapter, indicating a return--activity trade-off under fixed budget.
+
+To visualize how this trade-off accumulates over the episode rather than only at endpoint, \Cref{fig:action_space_equity_comparison} contrasts the corresponding equity paths.
+
+\begin{figure}[!tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/action_space_equity_comparison.pdf}
+\caption{Equity-curve comparison of simplified (3-action) and extended (10-action) interfaces on EURUSD, showing a return--smoothness trade-off.}
+\label{fig:action_space_equity_comparison}
+\end{figure}
+
+The temporal separation in \Cref{fig:action_space_equity_comparison} clarifies that action granularity changes policy behavior throughout training, not only final-point metrics: richer primitives increase opportunity capture but amplify path variability.
+
+% ------------------------------------------------------------------
+\subsection{Scaling Strategy Analysis (\Exp{03})}
+% ------------------------------------------------------------------
+
+\noindent\textbf{Objective.}
+\Exp{03} evaluates four scaling configurations: no scaling (\variant{s1}), pyramid-only (\variant{s2}), martingale-only (\variant{s3}), and combined (\variant{s4}).
+
+\input{tables/tab05_scaling}
+
+\Cref{tab:scaling} shows that all scaling-enabled variants improve over no scaling, with distinct objective-dependent preferences across return and drawdown.
+
+\begin{figure}[!tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/equity_curves_scaling.pdf}
+\caption{Training equity trajectories for scaling variants \variant{s1}--\variant{s4} on EURUSD, where scaling-enabled variants reduce maximum drawdown versus no scaling.}
+\label{fig:equity_curves_scaling}
+\end{figure}
+
+The path-level evidence in \Cref{fig:equity_curves_scaling} confirms that the gap is structural rather than noise at a single endpoint: enabling scaling alters drawdown dynamics over the full training horizon.
+
+% ------------------------------------------------------------------
+\subsection{Benchmark Calibration on EURUSD}
+% ------------------------------------------------------------------
+
+% NOTE: All benchmark tables and figures below report results on the EURUSD training split (see Section~\ref{sec:experiments}).
+Primary RQ findings are further calibrated against non-RL baselines and a DQN comparator. We first report headline endpoint metrics in \Cref{tab:benchmarks}, then inspect complementary risk diagnostics in \Cref{tab:benchmark_risk}.
+
+\input{tables/tab09_benchmarks}
+
+\input{tables/tab08_benchmarks}
+
+Taken together, the two tables show that RL improvements are not merely profit inflation: Double DQN remains favorable under risk-aware summaries and avoids liquidation events in this artifact view, while rule-based baselines underperform on cumulative return.
+
+\begin{figure*}[!tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/equity_comparison_with_benmark_startegies.pdf}
+\caption{Equity trajectories for RL agents and benchmark strategies on EURUSD, with rule-based baselines as calibration anchors.}
+\label{fig:benchmark_equity_comparison}
+\end{figure*}
+
+\Cref{fig:benchmark_equity_comparison} reinforces that the learning-based agents maintain stronger growth profiles than benchmark heuristics under identical execution assumptions.
+
+% ------------------------------------------------------------------
+\subsection{Cross-Pair Generality Diagnostics}
+% ------------------------------------------------------------------
+
+To assess whether the EURUSD pattern is idiosyncratic, \Cref{tab:cross_pair} reports DQN-vs-DDQN outcomes on three additional pairs using the same full-reward configuration.
+
+\input{tables/tab08_cross_pair}
+
+These results are restricted to the experimental scope defined in Section~\ref{sec:experiments}; the directional trend across pairs is descriptive: Double DQN is generally stronger on return-oriented metrics, with pair-specific differences in drawdown behavior.
+
+\begin{figure*}[!tbp]
+\centering
+\includegraphics[width=\linewidth]{figures/multi_pair_equity_curves.pdf}
+\caption{Multi-pair equity trajectories (EURUSD, GBPUSD, USDJPY, AUDUSD) for value-based agents under aligned simulator and reward settings.}
+\label{fig:multi_pair_equity_curves}
+\end{figure*}
+
+\Cref{fig:multi_pair_equity_curves} illustrates that cross-pair behavior is heterogeneous in amplitude but consistent in qualitative ordering, supporting the use of pair-diverse diagnostics alongside the primary EURUSD-focused research questions.

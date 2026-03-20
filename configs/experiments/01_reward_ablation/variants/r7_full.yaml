@@ -1,0 +1,23 @@
+# Full reward - all components enabled
+reward:
+  components:
+    profit:
+      enabled: true
+    holding:
+      enabled: true
+    volatility:
+      enabled: true
+    drawdown:
+      enabled: true
+    transaction:
+      enabled: true
+    overtrading:
+      enabled: true
+    scaling:
+      enabled: true
+    margin:
+      enabled: true
+    liquidation:
+      enabled: true
+    constraint_violation:
+      enabled: true

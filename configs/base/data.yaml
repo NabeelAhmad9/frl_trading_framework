@@ -1,0 +1,53 @@
+meta:
+  project_name: frl-trading-framework
+  version: "1.0.0"
+
+data:
+  pairs:
+    - EURUSD
+    - GBPUSD
+    - USDJPY
+    - AUDUSD
+  raw_data_dir: data/raw
+  processed_data_dir: data/processed
+  timestamp_column: timestamp
+  ohlcv_columns:
+    - open
+    - high
+    - low
+    - close
+    - volume
+  train_ratio: 0.8
+  random_seed: 42
+  frequency: 1H
+  timezone: UTC
+  missing_value_policy: ffill_then_drop_residual
+  duplicate_policy: keep_last
+  output_format: parquet
+
+  pair_metadata:
+    EURUSD:
+      base_currency: EUR
+      quote_currency: USD
+      pip_size: 0.0001
+      price_precision: 5
+    GBPUSD:
+      base_currency: GBP
+      quote_currency: USD
+      pip_size: 0.0001
+      price_precision: 5
+    USDJPY:
+      base_currency: USD
+      quote_currency: JPY
+      pip_size: 0.01
+      price_precision: 3
+    AUDUSD:
+      base_currency: AUD
+      quote_currency: USD
+      pip_size: 0.0001
+      price_precision: 5
+
+  validation:
+    require_positive_prices: true
+    require_nonnegative_volume: true
+    allow_missing_bars: true

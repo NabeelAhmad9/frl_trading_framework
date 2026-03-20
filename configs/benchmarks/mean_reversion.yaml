@@ -1,0 +1,7 @@
+benchmark:
+  name: mean_reversion
+  description: Contrarian strategy based on price overextension
+  policy: mean_reversion
+  lookback_window: 20
+  entry_z_threshold: 2.0
+  exit_z_threshold: 0.5

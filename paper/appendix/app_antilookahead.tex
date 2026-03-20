@@ -1,0 +1,28 @@
+\section{Anti-Lookahead Test Specification}
+\label{app:antilookahead}
+
+This appendix formalizes the anti-lookahead guarantee enforced by the environment and summarizes corresponding validation tests.
+
+\subsection{Formal Timing Rule}
+\begin{definition}[Decision--Execution Separation]
+At step $t$, the agent receives observations built from bars up to and including close$_t$. The chosen action $a_t$ is executed at open$_{t+1}$ under configured spread/slippage/commission rules. Reward and equity marking for that step are computed using information available at close$_{t+1}$, without access to bar $t+2$ or later.
+\end{definition}
+
+\subsection{Validation Test Cases}
+\paragraph{Test 1: Feature staleness check.}
+Inject a sentinel value into a future bar and verify that the step-$t$ observation tensor does not expose this sentinel.
+
+\paragraph{Test 2: Fill-price rule check.}
+For deterministic synthetic bars, verify execution at open$_{t+1}$ (not close$_t$ and not close$_{t+1}$).
+
+\paragraph{Test 3: Reward-timing check.}
+Verify that reward at step $t$ depends on costs and marks from bar $t+1$ only.
+
+\paragraph{Test 4: Scaler leakage check.}
+Verify that feature scaling parameters are fitted on the train split only and, if a held-out split is instantiated, reused unchanged during held-out transformation.
+
+\paragraph{Test 5: Mask-timing check.}
+Verify that legal-action masks are computed from current state/margin before action dispatch, and that illegal-action coercion/penalty is logged without future leakage.
+
+\subsection{Interpretation}
+Passing these tests does not guarantee real-market validity, but it materially reduces a major source of optimistic bias in trading RL backtests: unintended access to future information through timing or preprocessing pathways.

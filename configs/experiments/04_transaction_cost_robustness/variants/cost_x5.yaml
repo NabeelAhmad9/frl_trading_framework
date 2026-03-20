@@ -1,0 +1,4 @@
+# 5x transaction costs
+environment:
+  transaction_costs:
+    cost_multiplier: 5.0

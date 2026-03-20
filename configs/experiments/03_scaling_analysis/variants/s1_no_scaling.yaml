@@ -1,0 +1,5 @@
+# No scaling - disable pyramid and martingale
+environment:
+  actions:
+    max_pyramid_levels: 0
+    max_martingale_steps: 0

@@ -1,0 +1,47 @@
+\section{Related Work}
+\label{sec:related_work}
+
+This section critically situates the manuscript in reinforcement learning (RL) for financial trading, with emphasis on where prior work succeeds and where methodological gaps remain for leveraged foreign exchange (Forex) environments. We organize the review by research theme to separate algorithmic advances from simulation assumptions and evaluation practice.
+
+\subsection{Reinforcement Learning for Financial Trading: What Has Been Solved and What Has Not}
+Early financial RL studies established the feasibility of direct objective optimization. \citet{moody2001learning} demonstrated recurrent RL for trading with Sharpe-oriented objectives, and \citet{bertoluzzo2012testing} compared practical RL configurations in market settings. These studies established conceptual viability but used comparatively simple execution abstractions, limiting transfer to leveraged, friction-dominated environments.
+
+The deep-learning phase expanded representational capacity. For example, \citet{deng2016deep} introduced deep RL networks utilizing fuzzy logic for financial signal representation, and \citet{jiang2017deep} proposed portfolio-oriented deep RL in multi-asset settings using deterministic policy gradients. More recently, \citet{theate2021application} provided an end-to-end deep RL trading workflow focusing on raw return optimization, while \citet{liu2021finrl} improved reproducibility through their library-driven benchmark ecosystem (FinRL). However, across this line of work, execution engines frequently abstract away financing and liquidation details, making it difficult to determine whether gains arise from genuine learning quality or overly permissive simulators that ignore limit order book mechanics and friction \citep{gould2013limit,zhang2020deep}.
+
+To make this distinction explicit, \Cref{tab:related_work_comparison} contrasts representative studies on market scope, reward formulation, and action-space design.
+
+\input{tables/tab00_related_work}
+
+\subsection{Environment Fidelity and Temporal Causality}
+Simulator realism remains one of the strongest bottlenecks for credible trading RL \citep{zhang2020deep}. Many implementations model spread only partially, omit rollover financing, or approximate leverage effects with static penalties. In leveraged Forex, these omissions are first-order, not second-order: carrying costs, maintenance margin constraints, and liquidation rules directly shape feasible policies.
+
+Temporal causality is similarly under-specified in many studies. When observation and execution timing are not strictly separated, subtle lookahead leakage can inflate backtest quality~\citep{zhang2020deep}. In contrast, auditable anti-lookahead contracts explicitly bind decision, fill, and mark-to-market timestamps and therefore reduce hidden leakage pathways. This distinction is central for deployment-oriented inference.
+
+\subsection{Reward Design and Risk-Aware Objectives}
+Reward construction in trading RL is historically dominated by scalar objectives (raw return, equity delta, or risk-adjusted proxies) \citep{meng2019reinforcement,theate2021application}. These objectives are easy to optimize but offer weak interpretability for diagnosing whether an agent learns profitable timing, excessive turnover, or leverage overuse.
+
+Risk-aware formulations improve objective alignment. Sharpe-ratio optimization \citep{moody2001learning,sharpe1994sharpe}, Sortino-style downside sensitivity \citep{sortino1994performance}, and broader tail-risk considerations motivated by heavy-tailed return evidence \citep{cont2001empirical} each target different risk dimensions. Yet these designs are often still collapsed into a single scalar at training time, obscuring component-level attribution.
+
+Reward shaping theory \citep{ng1999policy} provides formal guarantees only under potential-based transformations; finance-specific penalties such as drawdown, overtrading, and margin-utilization terms are generally not policy-invariant. Consequently, component-wise ablation is methodologically necessary, not optional, when claiming that auxiliary terms improve learning.
+
+\subsection{Action-Space Modeling and Legality Constraints}
+Action-space design spans minimal discrete interfaces and continuous allocation policies. Minimal interfaces improve optimization stability but under-model execution operations such as scaling, partial reduction, and explicit reversal. Continuous actor-critic approaches, including proximal policy optimization (PPO) \citep{schulman2017proximal} and soft actor-critic (SAC) \citep{haarnoja2018soft}, improve expressive control but can make hard feasibility constraints less transparent unless constraint handling is explicitly implemented.
+
+In constrained market simulators, legality-aware discrete control is a practical middle ground: actions remain interpretable while invalid operations can be excluded directly via masking. Prior evidence on invalid-action masking in policy-gradient settings \citep{huang2020closer} supports this direction, but adoption in trading environments remains inconsistent and often limited to interaction-time checks rather than both interaction and target computation.
+
+\subsection{Algorithmic Stability and Replay Under Financial Non-Stationarity}
+Value-based methods are widely used because of their implementation simplicity and compatibility with discrete control. Deep Q-Networks (DQN) \citep{mnih2015humanlevel} and Double Deep Q-Networks (DDQN) \citep{hasselt2016deep} remain strong baselines, while dueling and distributional variants \citep{wang2016dueling,bellemare2017distributional} improve representation and uncertainty modeling in heavy-tailed return settings.
+
+Financial environments introduce additional instability: regime shifts, sparse high-quality transitions, and temporal dependence in replay. Prioritized experience replay \citep{schaul2016prioritized} and Rainbow-style combinations \citep{hessel2018rainbow} address part of this challenge, while sequence models such as long short-term memory (LSTM) architectures \citep{fischer2018deep} capture temporal structure more explicitly. Nonetheless, these algorithmic advances do not eliminate simulator-induced bias when execution fidelity is weak.
+
+\subsection{Forex-Specific Evidence and Evaluation Standards}
+Forex-focused RL studies \citep{carapuco2018reinforcement,rundo2019deep,lucarelli2019deep} show that predictive edge can be learned in currency markets, but most emphasize profitability outcomes over enforceable execution semantics and decomposable incentives. This leaves a persistent comparability problem: methods differ simultaneously in agent architecture, market assumptions, and evaluation protocol.
+
+More generally, trading RL evaluation still suffers from heterogeneous reporting standards \citep{zhang2020deep}. Modern practice requires joint reporting of return, volatility, drawdown, and turnover, plus calibration against rule-based baselines; these requirements are consistent with classical risk-return foundations in portfolio theory \citep{markowitz1952portfolio}. Multi-seed uncertainty quantification and stress testing remain under-reported across Forex RL literature.
+
+\subsection{Novelty and Contributions}
+The above review reveals a specific gap: prior studies usually improve \emph{one} axis (algorithm, reward objective, or benchmark tooling) while under-specifying the interaction among execution realism, legality-aware control, and decomposable incentives. This manuscript targets that joint gap.
+
+Unlike \citet{deng2016deep} and \citet{theate2021application}, this work enforces a strict anti-lookahead execution contract with explicit fill and mark timing in a leveraged Forex setting. In contrast to \citet{carapuco2018reinforcement} and \citet{rundo2019deep}, this work models rollover financing, maintenance margin constraints, and forced liquidation as explicit simulator mechanics rather than implicit risk penalties. Unlike typical scalar-reward designs \citep{meng2019reinforcement,theate2021application}, this work introduces an 11-component reward architecture with deterministic per-step logging to support auditable ablation. In contrast to environments that treat invalid actions only at interaction time, this work applies legality masks consistently in both data collection and value-target computation \citep{huang2020closer}.
+
+Therefore, the contribution is not a claim of a universally superior RL algorithm; it is a systems-level methodological contribution that couples realistic execution, transparent incentives, and reproducible experimentation into a single auditable framework.

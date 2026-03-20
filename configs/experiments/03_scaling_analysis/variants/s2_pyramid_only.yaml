@@ -1,0 +1,5 @@
+# Pyramid only - allow pyramid, disable martingale
+environment:
+  actions:
+    max_pyramid_levels: 2
+    max_martingale_steps: 0

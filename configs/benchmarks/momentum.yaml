@@ -1,0 +1,6 @@
+benchmark:
+  name: momentum
+  description: Trend-following heuristic using recent returns
+  policy: momentum
+  lookback_window: 20
+  entry_threshold: 0.0

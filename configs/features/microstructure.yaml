@@ -1,0 +1,7 @@
+features:
+  microstructure:
+    spread_proxy_method: hl_ratio
+    realized_volatility_window: 20
+    price_change_rate_window: 5
+    liquidity_proxy_enabled: false
+    session_proxy_enabled: true

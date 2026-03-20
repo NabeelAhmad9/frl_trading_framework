@@ -1,0 +1,74 @@
+environment:
+  observation:
+    window_length: 24
+    include_portfolio_state: true
+    include_legal_action_mask: true
+
+  account:
+    initial_capital: 100000.0
+    currency: USD
+
+  leverage:
+    max_leverage: 30
+    initial_margin_ratio: 0.0333333333
+    maintenance_margin_ratio: 0.5
+
+  actions:
+    base_lot_size: 0.1
+    reduce_fraction: 0.5
+    max_total_position_size: 2.0
+    max_open_lots_per_direction: 2.0
+    max_pyramid_levels: 5
+    max_martingale_steps: 3
+    adverse_threshold: 0.001
+    profit_threshold: 0.001
+    pyramid_increment_lots: 0.1
+    martingale_multiplier: 2.0
+    simplified_mode: false
+
+  invalid_action:
+    policy: convert_to_hold_with_penalty
+    penalty: 0.0
+
+  liquidation:
+    threshold: 0.25
+    force_close_policy: full_close
+
+  execution:
+    fill_price_rule: next_bar_open
+    mark_price_rule: next_bar_close
+    apply_cost_order:
+      - spread
+      - slippage
+      - commission
+      - rollover
+
+  session:
+    timezone: UTC
+    enabled: true
+
+  rollover:
+    enabled: true
+    cutoff_hour_utc: 22
+    triple_rollover_day: Wednesday
+    annual_rate_long: 0.02
+    annual_rate_short: -0.015
+
+  slippage:
+    enabled: true
+    mode: deterministic
+    base_slippage_pips: 0.5
+    volatility_multiplier: 1.0
+    session_multiplier: 1.0
+
+  transaction_costs:
+    enabled: true
+    spread_mode: proxy
+    fixed_spread_pips: 1.0
+    commission_per_lot: 3.5
+    cost_multiplier: 1.0
+
+  episode:
+    start_policy: beginning
+    end_policy: end_of_data
+    max_steps: null

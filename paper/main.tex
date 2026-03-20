@@ -1,0 +1,145 @@
+% ============================================================
+% main.tex
+% Decomposable Reward Modeling and Realistic Environment Design
+% for Reinforcement Learning-Based Forex Trading
+% ============================================================
+
+\documentclass[10pt, twocolumn]{article}
+
+% ---- Core packages ----
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{rotating}
+\usepackage[colorlinks=true, linkcolor=blue, citecolor=blue, urlcolor=blue]{hyperref}
+\usepackage{cleveref}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{microtype}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{geometry}
+\usepackage{array}
+\usepackage{makecell}
+\usepackage{tabularx}
+\usepackage{adjustbox}
+% Ensure we can force float placement within sections and improve double-column float handling
+\usepackage[section]{placeins}
+\usepackage{dblfloatfix}
+
+
+% ---- Page geometry ----
+\geometry{a4paper, top=1in, bottom=1in, left=0.85in, right=0.85in,
+          columnsep=0.25in}
+
+% ---- Float and page-break tuning ----
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{5}
+\setcounter{dbltopnumber}{3}
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\dbltopfraction}{0.9}
+\renewcommand{\textfraction}{0.08}
+\renewcommand{\floatpagefraction}{0.75}
+\renewcommand{\dblfloatpagefraction}{0.75}
+\setlength{\floatsep}{5pt plus 1.5pt minus 1.5pt}
+\setlength{\dblfloatsep}{5pt plus 1.5pt minus 1.5pt}
+\setlength{\intextsep}{5pt plus 1.5pt minus 1.5pt}
+\setlength{\textfloatsep}{6pt plus 1.5pt minus 1.5pt}
+\setlength{\dbltextfloatsep}{6pt plus 1.5pt minus 1.5pt}
+\setlength{\parskip}{0pt}
+\setlength{\parindent}{1em}
+\setlength{\bibsep}{2pt plus 0.3ex}
+\setlength{\abovedisplayskip}{4pt plus 1.5pt minus 1.5pt}
+\setlength{\belowdisplayskip}{4pt plus 1.5pt minus 1.5pt}
+\setlength{\abovedisplayshortskip}{2pt plus 1pt minus 1pt}
+\setlength{\belowdisplayshortskip}{3pt plus 1pt minus 1pt}
+\setlength{\tabcolsep}{4pt}
+\captionsetup{singlelinecheck=false,justification=raggedright}
+\captionsetup[figure]{skip=3pt}
+\captionsetup[table]{skip=3pt}
+\captionsetup[algorithm]{skip=3pt}
+\setlist[itemize,enumerate]{nosep,leftmargin=*}
+\setlist[description]{topsep=2pt,itemsep=1pt,leftmargin=1.8em}
+\setlength{\algorithmicindent}{1.0em}
+\renewcommand{\arraystretch}{1.04}
+\raggedbottom
+
+\makeatletter
+\setlength{\@fptop}{0pt}
+\setlength{\@fpbot}{0pt plus 1fil}
+\setlength{\@dblfptop}{0pt}
+\setlength{\@dblfpbot}{0pt plus 1fil}
+\renewcommand{\fps@algorithm}{tbp}
+\makeatother
+
+% ---- Custom commands ----
+\newcommand{\RQ}[1]{\textbf{RQ#1}}
+\newcommand{\Exp}[1]{\textsc{Exp-#1}}
+\newcommand{\variant}[1]{\texttt{#1}}
+\newcommand{\component}[1]{\textit{#1}}
+\newcommand{\metric}[1]{\textit{#1}}
+\newcommand{\placeholder}[1]{{\color{gray}[\textit{#1}]}}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+% ---- Title ----
+\title{%
+  \large\bfseries
+  Decomposable Reward Modeling and Realistic Environment Design\\
+  for Reinforcement Learning-Based Forex Trading%
+}
+\author{%
+  \normalsize
+  Nabeel Ahmad Saidd\\
+  \small Dr APJ Abdul Kalam Technical University, India\\
+  \href{mailto:nabeelahmadsaidd@gmail.com}{\texttt{nabeelahmadsaidd@gmail.com}}\\
+}
+\date{}
+
+% ============================================================
+\begin{document}
+% ============================================================
+
+\maketitle
+
+% ---- Abstract ----
+\begin{abstract}
+  \input{sections/abstract}
+\end{abstract}
+
+% ---- Main Sections ----
+\input{sections/introduction}
+\input{sections/related_work}
+\input{sections/methodology}
+\input{sections/experiments}
+\input{sections/results}
+\input{sections/discussion}
+\input{sections/limitations}
+\input{sections/conclusion}
+% ---- Conflict of Interest ----
+\section*{Conflict of Interest}
+The authors declare that they have no known competing financial interests or personal relationships that could have appeared to influence the work reported in this paper.
+
+% ---- Bibliography ----
+\bibliographystyle{abbrvnat}
+\bibliography{bibliography/references}
+
+% ---- Appendices ----
+\appendix
+\input{appendix/app_hyperparams}
+\input{appendix/app_configs}
+\input{appendix/app_antilookahead}
+\input{appendix/app_data_code_availability}
+
+\end{document}

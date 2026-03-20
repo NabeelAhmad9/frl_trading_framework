@@ -1,0 +1,18 @@
+features:
+  pipeline:
+    selected_feature_groups:
+      - technical
+      - microstructure
+    normalization:
+      enabled: true
+      scaler_type: standard
+      clip_min: -5.0
+      clip_max: 5.0
+    retained_raw_columns:
+      - timestamp
+      - open
+      - high
+      - low
+      - close
+      - volume
+    output_column_order_policy: canonical

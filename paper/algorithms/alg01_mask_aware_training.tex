@@ -1,0 +1,40 @@
+\begin{algorithm}[!tbp]
+\caption{Mask-aware DQN/DDQN training with legal-action masking.}
+\label{alg:mask_aware_training}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:}
+\STATE \hspace*{1em} \textbf{Environment \,\& state:} environment $\mathcal{E}$; state $s_t$; legal-action mask $m_t \in \{0,1\}^{|\mathcal{A}|}$, where $m_t[a]=1$ iff $a$ is legal in $s_t$
+\STATE \hspace*{1em} \textbf{Networks:} online network $Q_{\theta}$; target network $Q_{\theta^-}$
+\STATE \hspace*{1em} \textbf{Replay buffer:} $\mathcal{D}$ with capacity $N$
+\STATE \hspace*{1em} \textbf{Training hyperparameters:} batch size $B$; discount $\gamma$
+\STATE \hspace*{1em} \textbf{Scheduling:} learn-start $t_{\mathrm{start}}$; learn frequency $f_{\mathrm{learn}}$; target-sync interval $f_{\mathrm{target}}$; evaluation interval $f_{\mathrm{eval}}$; total steps $T$; evaluation budget $K_{\mathrm{eval}}$
+\STATE \hspace*{1em} \textbf{Algorithm type:} $\texttt{DQN}$ or $\texttt{DDQN}$
+\STATE Initialize $\theta$ randomly; set $\theta^- \leftarrow \theta$; initialize the $\epsilon$ schedule
+\STATE Reset $\mathcal{E}$ and observe $(s_0,m_0)$
+\FOR{$t=0$ to $T-1$}
+    \STATE Select $a_t$ by mask-aware $\epsilon$-greedy on $m_t$: with probability $\epsilon$, sample $a_t \sim \mathrm{Unif}(\{a:m_t[a]=1\})$; otherwise $a_t \leftarrow \arg\max_{a:\,m_t[a]=1} Q_{\theta}(s_t,a)$
+    \STATE Execute $a_t$ in $\mathcal{E}$ and observe $(s'_{t},r_t,d_t,\mathrm{info}_t,m'_{t})$
+    \STATE Store $(s_t,a_t,r_t,s'_{t},d_t,m_t,m'_{t})$ in $\mathcal{D}$
+    \STATE Update $(s_t,m_t) \leftarrow (s'_{t},m'_{t})$
+    \IF{$t \ge t_{\mathrm{start}}$ \textbf{and} $t \bmod f_{\mathrm{learn}}=0$ \textbf{and} $|\mathcal{D}| \ge B$}
+        \STATE Sample minibatch $\{(s_i,a_i,r_i,s'_i,d_i,m_i,m'_i)\}_{i=1}^{B}$ from $\mathcal{D}$
+        \IF{algorithm type is \texttt{DDQN}}
+            \STATE $a_i^{\star} \leftarrow \arg\max_{a:\,m'_i[a]=1} Q_{\theta}(s'_i,a),\ \forall i$
+            \STATE $y_i \leftarrow r_i + \gamma(1-d_i)Q_{\theta^-}(s'_i,a_i^{\star}),\ \forall i$
+        \ELSE
+            \STATE $y_i \leftarrow r_i + \gamma(1-d_i)\max_{a:\,m'_i[a]=1} Q_{\theta^-}(s'_i,a),\ \forall i$
+        \ENDIF
+        \STATE $\mathcal{L} \leftarrow \frac{1}{B}\sum_{i=1}^{B}\mathrm{Huber}\big(Q_{\theta}(s_i,a_i)-y_i\big)$
+        \STATE Update $\theta$ by gradient descent with gradient clipping
+    \ENDIF
+    \IF{$t \bmod f_{\mathrm{target}}=0$}
+        \STATE Hard-sync target network: $\theta^- \leftarrow \theta$
+    \ENDIF
+    \IF{$t \bmod f_{\mathrm{eval}}=0$}
+        \STATE Evaluate the deterministic policy ($\epsilon=0$) for $K_{\mathrm{eval}}$ episodes and log all outputs
+    \ENDIF
+    \STATE Update $\epsilon$
+\ENDFOR
+\STATE \textbf{Output:} trained parameters $\theta$, replay buffer state, and diagnostic artifacts
+\end{algorithmic}
+\end{algorithm}

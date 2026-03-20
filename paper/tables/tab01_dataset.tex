@@ -1,0 +1,31 @@
+\begin{table}[!tbp]
+\centering
+\caption{Dataset statistics (raw hourly bars; chronological 80/20 split shown for completeness; all reported experiments use the training split only).}
+\label{tab:dataset}
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{@{}lrrrr@{}}
+\toprule
+\textbf{Pair} & \textbf{$N_{\text{total}}$} & \textbf{$N_{\text{train}}$} & \textbf{$N_{\text{held-out}}$} & \textbf{Missing(\%)} \\
+\midrule
+AUDUSD & 25000 & 20000 & 5000 & -- \\
+EURUSD & 25000 & 20000 & 5000 & -- \\
+GBPUSD & 25000 & 20000 & 5000 & -- \\
+USDJPY & 25000 & 20000 & 5000 & -- \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Pair} & \textbf{Train period} & \textbf{Held-out period (unused here)} \\
+\midrule
+AUDUSD & 2022-01-01 -- 2025-01-01 & 2025-01-01 -- 2026-01-01 \\
+EURUSD & 2022-01-01 -- 2025-01-01 & 2025-01-01 -- 2026-01-01 \\
+GBPUSD & 2022-01-01 -- 2025-01-01 & 2025-01-01 -- 2026-01-01 \\
+USDJPY & 2022-01-01 -- 2025-01-01 & 2025-01-01 -- 2026-01-01 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+

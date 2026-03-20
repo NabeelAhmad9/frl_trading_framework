@@ -1,0 +1,52 @@
+\begin{table*}[!tbp]
+\centering
+\caption{Representative RL trading studies compared by market, reward formulation, and action-space design.}
+\label{tab:related_work_comparison}
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{@{}llcc@{}}
+\toprule
+\textbf{Study} & \textbf{Market} & \textbf{Reward} & \textbf{Actions} \\
+\midrule
+\citet{moody2001learning}        
+& General    
+& Scalar (log return / Sharpe proxy) 
+& Continuous (portfolio weights) \\
+
+\citet{deng2016deep}             
+& Equities   
+& Scalar (profit / return) 
+& 3 discrete (buy/hold/sell) \\
+
+\citet{jiang2017deep}            
+& Crypto     
+& Scalar (portfolio return) 
+& Continuous (portfolio allocation) \\
+
+\citet{carapuco2018reinforcement}
+& Forex      
+& Scalar (profit-based) 
+& 3 discrete (buy/sell/hold) \\
+
+\citet{rundo2019deep}            
+& Forex (HF) 
+& Scalar (PnL / return) 
+& Discrete \\
+
+\citet{theate2021application}    
+& Equities   
+& Scalar (net return) 
+& 3 discrete (buy/hold/sell) \\
+
+\citet{liu2021finrl}             
+& Equities   
+& Scalar (portfolio return / reward shaping) 
+& Discrete (multi-asset actions) \\
+
+\textbf{This work}               
+& \textbf{Forex} 
+& \textbf{Decomposable (11 components)} 
+& \textbf{10 discrete actions} \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}

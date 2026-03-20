@@ -1,0 +1,12 @@
+experiment:
+  name: 02_action_space
+  description: Compare simplified 3-action vs extended 10-action interface
+  base_pair: EURUSD
+  base_agent: doubledqn
+  base_config_refs:
+    - configs/base/data.yaml
+    - configs/base/environment.yaml
+    - configs/base/reward.yaml
+    - configs/base/training.yaml
+    - configs/agents/doubledqn.yaml
+  variant_dir: variants

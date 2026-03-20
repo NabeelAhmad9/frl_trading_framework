@@ -1,0 +1,23 @@
+features:
+  technical:
+    enabled_indicators:
+      - sma
+      - ema
+      - rsi
+      - macd
+      - bollinger
+      - rolling_volatility
+      - log_return
+    moving_average_windows:
+      - 10
+      - 20
+      - 50
+    rsi_window: 14
+    macd_fast: 12
+    macd_slow: 26
+    macd_signal: 9
+    bollinger_window: 20
+    bollinger_sigma: 2.0
+    rolling_volatility_window: 20
+    log_return_horizon: 1
+    warmup_policy: trim

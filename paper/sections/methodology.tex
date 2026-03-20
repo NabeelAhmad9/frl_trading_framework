@@ -1,0 +1,167 @@
+\section{Methodology}\label{sec:methodology}
+
+This section formalizes the end-to-end research pipeline, from causal data preparation to environment transition mechanics and mask-aware value learning. To improve reproducibility, we provide explicit algorithmic specifications for (i) execution and portfolio updates, (ii) compositional reward assembly, and (iii) training-loop optimization; these correspond to Algorithms~\ref{alg:execution_portfolio_update}, \ref{alg:reward_computation}, and \ref{alg:mask_aware_training}, respectively.
+
+\subsection{Design Principles and System Overview}
+The methodology is organized around three design principles: \emph{economic fidelity}, \emph{temporal causality}, and \emph{auditability}. Economic fidelity is enforced through explicit transaction-cost and margin accounting; temporal causality is enforced through strict chronological processing and anti-lookahead execution timing; and auditability is enforced through deterministic component ordering, configuration snapshots, and structured logging artifacts. The resulting end-to-end pipeline (data ingestion $\rightarrow$ preprocessing $\rightarrow$ environment simulation $\rightarrow$ value-function learning $\rightarrow$ standardized evaluation export) is summarized in \Cref{fig:system_architecture}.
+
+\input{figures/architecture}
+
+\subsection{Data Pipeline, Temporal Partitioning, and Leakage Control}
+The dataset consists of hourly open-high-low-close-volume (OHLCV) bars for EURUSD, GBPUSD, USDJPY, and AUDUSD (summary in \Cref{tab:dataset}). Data are normalized to Coordinated Universal Time (UTC), validated for schema integrity, deduplicated using a last-occurrence retention policy, and processed with deterministic missing-value handling.
+
+
+\paragraph{Chronological processing policy.}
+To preserve temporal causality, all experiments process data in strict chronological order with no shuffling. All evaluation metrics are computed exclusively on training trajectories and logged artifacts. No held-out or test split is used at any stage. This ensures that all reported results reflect only the training distribution, with no claims regarding generalization or out-of-sample performance.
+
+\paragraph{Train-only transformations and warm-up handling.}
+Feature scaling parameters are estimated on the training data only and reused throughout. To initialize rolling indicators at the start of training, a warm-up lookback segment is prepended from the beginning of the training data, and warm-up rows are discarded from final training artifacts. No test or held-out data is used for any transformation or initialization.
+
+\subsection{Feature Engineering and Observation Construction}
+Features are organized into deterministic namespaces so that all runs share a stable, auditable column ordering:
+\begin{itemize}[leftmargin=1.4em]
+    \item \textbf{Technical indicators}: simple and exponential moving averages (SMA/EMA; 10, 20, 50), relative strength index (RSI; 14), moving average convergence divergence (MACD; 12, 26, 9), Bollinger components (20, $2\sigma$), one-bar log return, and rolling volatility.
+	\item \textbf{Microstructure proxies}: spread proxy $(H-L)/C$, short-horizon price-change proxy, realized volatility proxy, and UTC session label.
+\end{itemize}
+The canonical ordering improves reproducibility and prevents accidental feature-index drift across experiment variants.
+
+\paragraph{Windowing and input dimensions.}
+Let $L$ denote the observation lookback window ($L=24$ in release runs), $d_{\mathrm{feat}}$ the number of engineered market features, $d_{\mathrm{port}}=10$ the portfolio-state dimension, and $n_a$ the active action count ($n_a \in \{3,10\}$). The flattened MLP input dimension is
+\begin{equation}
+d_{\mathrm{flat}} = L\,d_{\mathrm{feat}} + d_{\mathrm{port}} + n_a.
+\label{eq:flat_input_dim}
+\end{equation}
+Equation~\ref{eq:flat_input_dim} is used consistently across training and evaluation to guarantee that architecture instantiation matches the declared observation schema.
+The observation schema is summarized in \Cref{tab:obs_schema}.
+
+\input{tables/tab10_observation_schema}
+
+\subsection{Trading Environment}
+The environment follows the Gymnasium application programming interface (API), consistent with the OpenAI Gym design lineage \citep{brockman2016openai}, and exposes dictionary observations together with deterministic transition diagnostics. This explicit state contract enables direct reproducibility checks across training and evaluation workflows.
+
+\subsubsection{Action Space and Legal Masking}
+
+The extended action interface contains 10 operations:
+\begin{itemize}
+    \item \texttt{HOLD}
+    \item \texttt{OPEN\_LONG}, \texttt{OPEN\_SHORT}
+    \item \texttt{PYRAMID\_LONG}, \texttt{PYRAMID\_SHORT}
+    \item \texttt{MARTINGALE\_LONG}, \texttt{MARTINGALE\_SHORT}
+    \item \texttt{REDUCE}
+    \item \texttt{CLOSE}
+    \item \texttt{REVERSE}
+\end{itemize}
+
+For controlled comparisons, a simplified 3-action adapter is used:
+\begin{itemize}
+    \item \texttt{HOLD}
+    \item \texttt{TARGET\_LONG}
+    \item \texttt{TARGET\_SHORT}
+\end{itemize}
+These are mapped to valid extended operations conditioned on the current position state.
+
+Action legality is recomputed at every step using direction, margin availability, and scaling-depth constraints. The legal mask is stored with transitions in replay and reused for both exploratory sampling and masked argmax target computation. Although prior empirical evidence is reported primarily for policy-gradient settings \citep{huang2020closer}, the same legality principle is applied here to value-based updates. \Cref{tab:action_definitions} summarizes extended-action semantics.
+\input{tables/tab12_action_definitions}
+
+\subsubsection{Execution Timing and Market Frictions}
+To prevent lookahead leakage, step timing is fixed as:
+\begin{equation}
+\begin{aligned}
+\mathrm{observe}\,\mathrm{close}_t \;\rightarrow\; \mathrm{decide}\,a_t \;\rightarrow\; \mathrm{fill}\,\mathrm{open}_{t+1} \\
+\rightarrow\; \mathrm{mark}\,\mathrm{close}_{t+1}.
+\end{aligned}
+\label{eq:execution_timing_contract}
+\end{equation}
+The fill model applies spread, commission, and slippage in deterministic order; rollover financing is charged at 22:00~UTC with triple rollover on Wednesdays. Equation~\ref{eq:execution_timing_contract} is the causal timing contract summarized in \Cref{fig:timing_diagram}.
+
+\input{figures/timing_diagram}
+
+\subsubsection{Portfolio and Risk Accounting}
+The account model tracks cash, equity, realized and unrealized PnL, used/free margin, directional exposure, scaling depth, and drawdown. Core constraints include maximum leverage ($30\times$), maintenance margin ($50\%$ of initial margin requirement), bounded scaling depth, and forced liquidation at a fixed equity threshold. These controls are necessary to prevent value-function optimization from exploiting infeasible leverage trajectories.
+
+Algorithm~\ref{alg:execution_portfolio_update} formalizes the exact execution and accounting order, including legality checks, friction application, rollover timing, margin updates, and forced liquidation handling.
+
+\input{algorithms/alg02_execution_portfolio_update}
+
+\subsection{Compositional Reward Modeling}
+
+We model the reward as a weighted composition of components. Let $c_i(s_t, a_t, s_{t+1})$ denote component $i$ with weight $w_i$. The pre-normalized reward is:
+\begin{equation}
+R_t^{\text{raw}} = \sum_{i=1}^{11} w_i\, c_i(s_t, a_t, s_{t+1}).
+\label{eq:raw_reward_sum}
+\end{equation}
+The final reward applies clipping:
+\begin{equation}
+R_t = \mathrm{clip}(R_t^{\text{raw}}, -1, 1).
+\label{eq:reward_clip}
+\end{equation}
+Equation~\ref{eq:raw_reward_sum} defines deterministic component aggregation, and Equation~\ref{eq:reward_clip} bounds temporal-difference target magnitude.
+
+\paragraph{Clipping vs. running normalization.}
+Clipping bounds temporal-difference targets and stabilizes early training by limiting extreme updates. It preserves sign information and relative ordering within the unclipped region, but compresses large-magnitude rewards. In contrast, running normalization mitigates scale drift but introduces non-stationarity into the learning objective. We therefore adopt clipping as the default and use adaptive normalization only in sensitivity analyses.
+
+\paragraph{Component structure and weighting.}
+The 11 components span four functional groups: 
+(i) return (post-cost profit), 
+(ii) risk control (volatility and drawdown), 
+(iii) trading frictions (transaction cost and overtrading), and 
+(iv) constraints (margin usage, liquidation, and rule violations), 
+with asymmetric penalties for scaling behaviors (martingale penalized more strongly than pyramiding). 
+Baseline weights and definitions are provided in \Cref{tab:reward_components}.
+
+\input{tables/tab11_reward_components}
+
+Algorithm~\ref{alg:reward_computation} specifies the deterministic per-step reward assembly pipeline, including component enable switches for ablations, weighting, clipping, and structured logging.
+
+\input{algorithms/alg03_reward_computation}
+
+\paragraph{Logging and ablation protocol.}
+Component evaluation follows a fixed order, and each term is logged per step via the environment \texttt{info} dictionary and persisted reward traces. This enables direct attribution in ablation experiments (\variant{r1}--\variant{r7}), where individual components or weights are selectively modified. Because non-potential reward shaping can alter optimal policies \citep{ng1999policy}, profit remains the primary signal, with auxiliary penalties introduced incrementally.
+
+\input{figures/reward_taxonomy}
+% Ensure floats from this section are placed here (prevent deferral into appendix)
+\subsection{Agent Architectures}
+Both agents are value-based and share the same backbone: a feed-forward multilayer perceptron (MLP) with hidden dimensions $[512,512,256]$, ReLU activations, and a linear Q-value output head. Output dimensionality equals the active action-space size ($3$ in simplified mode, $10$ in extended mode). The agents are Deep Q-Network (DQN) and Double Deep Q-Network (DDQN) variants, selected because they support explicit legality masking in discrete control.
+
+\subsubsection{DQN}
+DQN uses temporal-difference targets with periodic hard target-network synchronization \citep{mnih2015humanlevel}:
+\begin{equation}
+y_t^{\text{DQN}} = r_t + \gamma (1-d_t)\max_{a' \in \mathcal{A}_{\text{legal}}(s_{t+1})} Q_{\theta^-}(s_{t+1}, a').
+\label{eq:dqn_target}
+\end{equation}
+Equation~\ref{eq:dqn_target} masks invalid actions directly in target construction.
+
+\subsubsection{Double DQN}
+Double DQN decouples action selection and evaluation:
+\begin{equation}
+a^* = \arg\max_{a' \in \mathcal{A}_{\text{legal}}(s_{t+1})} Q_{\theta}(s_{t+1}, a').
+\label{eq:ddqn_action_select}
+\end{equation}
+\begin{equation}
+y_t^{\text{DDQN}} = r_t + \gamma (1-d_t) Q_{\theta^-}(s_{t+1}, a^*).
+\label{eq:ddqn_target}
+\end{equation}
+Equations~\ref{eq:ddqn_action_select} and \ref{eq:ddqn_target} separate online action selection from target-network evaluation, reducing value overestimation in volatile training regimes \citep{hasselt2016deep}.
+
+\paragraph{Mask-aware exploration policy.}
+Exploration follows an $\epsilon$-greedy policy defined on legal actions only: with probability $\epsilon$, the agent samples uniformly from legal actions; otherwise, it selects the legal argmax action. The same legality constraints are applied during replay-based target computation, ensuring consistency between data collection and value updates.
+
+\paragraph{Algorithmic variants outside release scope.}
+The architecture is compatible with dueling heads and distributional value estimation, which are relevant in heavy-tailed return settings \citep{wang2016dueling,bellemare2017distributional}. These variants are intentionally excluded from the main release protocol to isolate the effect of environment and reward design under DQN-family baselines.
+
+\subsection{Training Protocol}
+Core settings are fixed across experiment families unless explicitly overridden. For global reproducibility and side-by-side comparability, the exact training and environment values are consolidated in \Cref{tab:hyperparams} within \Cref{sec:experiments}.
+
+Algorithm~\ref{alg:mask_aware_training} summarizes the full mask-aware DQN/DDQN training loop, including replay storage of legality masks, learn/start frequency gates, target-network synchronization, and periodic evaluation cadence.
+
+\input{algorithms/alg01_mask_aware_training}
+\input{figures/training_loop}
+
+\paragraph{Rationale for optimization settings.}
+The $10^6$-step horizon improves coverage of diverse market regimes for off-policy replay. A 40K replay buffer balances decorrelation and recency under non-stationary financial dynamics. Batch size 128 and Huber loss provide stable gradient estimates, while gradient clipping (norm 10) limits rare but destabilizing updates. The learning rate ($2.5\times10^{-4}$) and target-update interval (2,000 steps) were selected to control estimator variance without slowing convergence excessively.
+
+\paragraph{Evaluation cadence and diagnostic logging.}
+Training logs include learning curves, loss, reward components, action distributions, turnover, and liquidation events. Periodic deterministic evaluation is performed during training (default interval: every 10,000 steps) using only training episodes and stored trajectories. At the end of each run, a deterministic full-horizon evaluation is conducted on the training data. Reported metrics include cumulative and annualized returns, volatility, Sharpe~\citep{sharpe1994sharpe}, Sortino~\citep{sortino1994performance}, maximum drawdown, win rate, turnover, liquidation statistics, and scaling utilization---all computed strictly from training artifacts. No held-out or test data is used at any point.
+
+\paragraph{Determinism scope and methodological limitation.}
+Reproducibility and seeding details are centralized in the experimental-design protocol (see Section~\ref{sec:experiments}). The manuscript reports deterministic, artifact-level runs; see Section~\ref{sec:experiments} for the canonical seed value and evaluation scope.

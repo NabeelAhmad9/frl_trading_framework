@@ -1,0 +1,19 @@
+evaluation:
+  deterministic_policy: true
+  split_selection:
+    - train
+    - test
+  periods_per_year: 6048
+  risk_free_rate: 0.0
+  metric_windows: []
+  save_trade_log: true
+
+  comparison:
+    enabled: true
+
+  statistical_tests:
+    enabled: true
+    method: bootstrap_or_not_applicable
+
+  figure_format: pdf
+  table_format: csv

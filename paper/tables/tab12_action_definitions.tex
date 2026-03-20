@@ -1,0 +1,24 @@
+\begin{table*}[!tbp]
+\centering
+\caption{Extended action semantics and legality conditions (executed at $open_{t+1}$).}
+\label{tab:action_definitions}
+
+\begin{tabularx}{\linewidth}{@{}r l >{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X@{}}
+\toprule
+\textbf{ID} & \textbf{Action} & \textbf{Primary legality precondition} & \textbf{Execution effect} \\
+\midrule
+0 & HOLD & Always legal & Maintain current position; no new order submitted \\
+1 & OPEN\_LONG & Flat position and sufficient free margin & Open long exposure at base lot size \\
+2 & OPEN\_SHORT & Flat position and sufficient free margin & Open short exposure at base lot size \\
+3 & PYRAMID\_LONG & Existing long position, scaling depth below cap, margin available & Add to long position using configured pyramid increment \\
+4 & PYRAMID\_SHORT & Existing short position, scaling depth below cap, margin available & Add to short position using configured pyramid increment \\
+5 & MARTINGALE\_LONG & Existing long position, martingale depth below cap, margin available & Add long exposure after adverse movement using martingale scaling rule \\
+6 & MARTINGALE\_SHORT & Existing short position, martingale depth below cap, margin available & Add short exposure after adverse movement using martingale scaling rule \\
+7 & REDUCE & Non-flat position & Partially reduce current exposure (configured reduction fraction) \\
+8 & CLOSE & Non-flat position & Fully close current position \\
+9 & REVERSE & Non-flat position and sufficient margin for opposite side & Close current direction, then open opposite direction within one action \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+

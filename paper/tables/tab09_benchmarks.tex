@@ -1,0 +1,21 @@
+\begin{table}[!tbp]
+\centering
+\caption{Benchmark comparison on EURUSD. RL agents use full reward variant \variant{r7}.}
+\label{tab:benchmarks}
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{@{}lrrrrr@{}}
+\toprule
+\textbf{Method} & \textbf{Sharpe} & \textbf{Cum.Ret(\%)} & \textbf{MaxDD(\%)} & \textbf{WinRate(\%)} & \textbf{Turnover} \\
+\midrule
+Random Policy & -13.380 & -34.58 & 34.70 & 25.99 & 2199.98 \\
+Buy-and-Hold & -0.358 & -1.05 & 2.08 & 0.00 & 0.11 \\
+Momentum & -1.355 & -3.82 & 4.05 & 23.62 & 186.28 \\
+Mean-Reversion & -0.807 & -1.67 & 2.34 & 24.64 & 157.67 \\
+DQN & 0.369 & 24.56 & 8.72 & 34.12 & 1316.51 \\
+Double DQN & 0.765 & 57.09 & 2.31 & 33.15 & 1156.51 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+

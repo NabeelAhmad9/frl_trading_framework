@@ -1,0 +1,20 @@
+\section{Future Work}
+\label{sec:future_work}
+
+The present manuscript establishes a controlled, reproducible baseline for Forex reinforcement learning, but several limitations naturally define the next research stage. This section outlines those limitations as concrete future-work priorities.
+
+\subsection{Limitations of the Current Study}
+All primary findings are training-split based (see Section~\ref{sec:experiments} for canonical seeding and setup). As a result, the reported differences should be interpreted as directional evidence about system behavior rather than fully characterized performance distributions. Future studies should report multi-seed confidence intervals and wider temporal stress windows to quantify stability under regime variation.
+
+The current experiments are pair-local: each environment instance models one currency pair at a time. This excludes cross-pair capital allocation, shared margin coupling, and correlation-aware portfolio control. Extending the framework to joint portfolio settings is required for full institutional realism.
+
+\subsection{Scalability and Algorithmic Extensions}
+Although the infrastructure is modular, scaling to larger instrument universes and longer histories will require more efficient replay management, distributed rollouts, and memory-aware training pipelines. From an algorithmic perspective, the release focuses on value-based baselines (DQN and DDQN) to isolate environment and reward effects. Future work should evaluate whether proximal policy optimization (PPO), soft actor-critic (SAC), and Rainbow-style extensions alter the observed reward and action-space trade-offs under identical simulator assumptions \citep{schulman2017proximal,haarnoja2018soft,hessel2018rainbow}.
+
+\subsection{Potential Methodological Improvements}
+Position management is currently discretized with fixed lot and rule-bounded scaling depth. A natural extension is hybrid control that preserves legality constraints while permitting continuous sizing and explicit risk-budget targets. Reward calibration can also be expanded by testing adaptive weighting schedules and regime-conditioned penalties, while retaining the same auditable per-component logging introduced in this paper.
+
+\subsection{Real-World Deployment Challenges}
+The current evaluation is simulation-only. It does not yet incorporate broker-specific routing behavior, execution latency, partial fills, quote outages, or production risk controls (for example, kill-switch policies and operational monitoring). Addressing these constraints requires a staged transition from historical simulation to paper trading and, eventually, limited-capital live pilots under strict governance.
+
+In summary, future progress should combine broader uncertainty quantification, portfolio-level scaling, richer algorithmic baselines, and deployment-grade execution modeling before making strong claims about operational readiness.

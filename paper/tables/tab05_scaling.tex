@@ -1,0 +1,19 @@
+% tab05_scaling.tex
+\begin{table}[!tbp]
+\centering
+\caption{Scaling-strategy analysis on EURUSD (Double DQN).}
+\label{tab:scaling}
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{@{}lrrrrrr@{}}
+\toprule
+\textbf{Variant} & \textbf{Sharpe} & \textbf{Cum.Ret(\%)} & \textbf{MaxDD(\%)} & \textbf{AvgPyr} & \textbf{AvgMart} & \textbf{Turnover} \\
+\midrule
+s1\_no\_scaling & -1.568 & -16.54 & 16.74 & 0.000 & 0.000 & 1440.09 \\
+s2\_pyramid & -0.136 & -2.48 & 5.73 & 0.083 & 0.000 & 1394.52 \\
+s3\_martingale & 0.319 & 8.94 & 4.63 & 0.000 & 0.122 & 1273.71 \\
+s4\_both & 0.355 & 13.08 & 6.79 & 0.086 & 0.096 & 1483.55 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+

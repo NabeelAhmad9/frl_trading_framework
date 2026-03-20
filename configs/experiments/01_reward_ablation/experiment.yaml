@@ -1,0 +1,12 @@
+experiment:
+  name: 01_reward_ablation
+  description: Measure contribution of reward components incrementally
+  base_pair: EURUSD
+  base_agent: doubledqn
+  base_config_refs:
+    - configs/base/data.yaml
+    - configs/base/environment.yaml
+    - configs/base/reward.yaml
+    - configs/base/training.yaml
+    - configs/agents/doubledqn.yaml
+  variant_dir: variants

@@ -1,0 +1,40 @@
+agent:
+  name: dqn
+  algorithm:
+    double_dqn: false
+
+  model:
+    encoder_type: mlp
+    hidden_dims:
+      - 512
+      - 512
+      - 256
+    dueling: false
+    activation: relu
+    dropout: 0.0
+
+  optimizer:
+    learning_rate: 0.00025
+
+  discount:
+    gamma: 0.99
+    
+  replay:
+    buffer_size: 40000
+    batch_size: 128
+
+  target:
+    update_interval: 2000
+
+  exploration:
+    epsilon_start: 1.0
+    epsilon_end: 0.01
+    epsilon_decay_steps: 30000
+
+  training:
+    gradient_clip_norm: 10.0
+    learn_start_steps: 10000
+    learn_frequency: 4
+    mixed_precision: true
+    amp_dtype: fp16
+

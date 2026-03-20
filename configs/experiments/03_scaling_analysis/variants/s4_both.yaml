@@ -1,0 +1,5 @@
+# Both pyramid and martingale enabled
+environment:
+  actions:
+    max_pyramid_levels: 2
+    max_martingale_steps: 2

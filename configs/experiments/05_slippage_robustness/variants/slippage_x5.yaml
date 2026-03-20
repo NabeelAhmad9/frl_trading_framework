@@ -1,0 +1,4 @@
+# 5x slippage
+environment:
+  slippage:
+    base_slippage_pips: 2.5

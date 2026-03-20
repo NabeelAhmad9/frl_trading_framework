@@ -1,0 +1,5 @@
+benchmark:
+  name: buy_and_hold
+  description: Buy and hold long position from start to end
+  policy: fixed_long
+  exit_at_end: true

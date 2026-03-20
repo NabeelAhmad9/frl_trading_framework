@@ -1,0 +1,4 @@
+# 2x transaction costs
+environment:
+  transaction_costs:
+    cost_multiplier: 2.0

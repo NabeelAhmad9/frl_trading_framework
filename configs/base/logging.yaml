@@ -1,0 +1,31 @@
+logging:
+  level: INFO
+  console:
+    enabled: true
+  file:
+    enabled: true
+  progress:
+    enabled: true
+    verbosity: normal
+    refresh_rate: 0.1
+    miniters: 1
+    dynamic_ncols: true
+    ascii: false
+    leave_outer: true
+    leave_inner: false
+    metrics_update_interval: 50
+    bar_format: "{l_bar}{bar}| {n_fmt}/{total_fmt} [{elapsed}<{remaining}, {rate_fmt}] {postfix}"
+    colours:
+      training: cyan
+      episode: green
+      experiment: magenta
+      evaluation: blue
+      benchmark: yellow
+      pair: white
+      agent: red
+      workflow: bright_blue
+  log_rewards_by_component: true
+  reward_component_log_interval: 1000
+  flush_interval: 128
+  evaluation_verbosity: normal
+  log_system_info: true

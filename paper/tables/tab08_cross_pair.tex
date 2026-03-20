@@ -1,0 +1,27 @@
+\begin{table*}[!tbp]
+\centering
+\caption{Cross-pair DQN vs.\ Double DQN on train split (full reward variant \variant{r7} ).}
+\label{tab:cross_pair}
+
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{llrrrrr}
+\toprule
+\textbf{Pair} & \textbf{Agent} & \textbf{Sharpe} & \textbf{Sortino} & \textbf{Cum.Ret(\%)} & \textbf{MaxDD(\%)} & \textbf{WinRate(\%)} \\
+\midrule
+EURUSD & DQN & 0.369 & 0.501 & 24.53 & 8.72 & 34.15 \\
+EURUSD & DDQN & 0.765 & 1.117 & 57.09 & 2.31 & 33.15 \\
+\midrule
+GBPUSD & DQN & 0.164 & 0.195 & 11.98 & 9.59 & 31.96 \\
+GBPUSD & DDQN & 0.759 & 0.969 & 83.19 & 3.14 & 31.90 \\
+\midrule
+USDJPY & DQN & 0.958 & 1.419 & 94.08 & 2.16 & 35.63 \\
+USDJPY & DDQN & 1.115 & 1.615 & 115.01 & 4.44 & 33.69 \\
+\midrule
+AUDUSD & DQN & 0.542 & 0.754 & 33.93 & 7.63 & 30.91 \\
+AUDUSD & DDQN & 0.811 & 1.222 & 52.98 & 4.91 & 32.16 \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}
+
+

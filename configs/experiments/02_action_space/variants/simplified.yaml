@@ -1,0 +1,4 @@
+# Simplified 3-action mode
+environment:
+  actions:
+    simplified_mode: true

@@ -1,0 +1,57 @@
+reward:
+  components:
+    profit:
+      enabled: true
+      return_scale: 100.0
+    holding:
+      enabled: true
+    volatility:
+      enabled: true
+    drawdown:
+      enabled: true
+    transaction:
+      enabled: true
+    overtrading:
+      enabled: true
+    scaling:
+      enabled: true
+    margin:
+      enabled: true
+    liquidation:
+      enabled: true
+    constraint_violation:
+      enabled: true
+    sharpe:
+      enabled: false
+
+  weights:
+    profit: 1.0
+    holding: 0.03
+    volatility: 0.01
+    drawdown: 0.05
+    transaction: 0.1
+    overtrading: 0.02
+    pyramid_penalty: 0.05
+    martingale_penalty: 0.12
+    margin: 0.05
+    liquidation: 2.0
+    constraint_violation: 0.1
+    sharpe: 0.0
+
+  normalization:
+    method: clip_only
+    clip_min: -1.0
+    clip_max: 1.0
+    tanh_scale: 1.0
+
+  overtrading:
+    window: 20
+    threshold: 12
+    max_penalty: 0.02
+
+  scaling:
+    event_scale: 0.02
+    max_penalty_per_step: 0.02
+
+  constraint_violation:
+    base_penalty: 0.02

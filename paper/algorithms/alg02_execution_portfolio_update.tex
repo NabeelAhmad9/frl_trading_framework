@@ -1,0 +1,35 @@
+\begin{algorithm}[!tbp]
+\caption{Execution and portfolio update with frictions.}
+\label{alg:execution_portfolio_update}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:} portfolio state $P_t$, action proposal $a_t$, bars
+\STATE \hspace*{1em} $(\mathrm{close}_t,\mathrm{open}_{t+1},\mathrm{close}_{t+1})$, configuration $\Omega$, legal mask $m_t$
+\STATE \textbf{Output:} next portfolio state $P_{t+1}$, realized/unrealized PnL,
+\STATE \hspace*{1em} cost trace, violation flag, and liquidation flag
+\STATE Recompute $m_t$ from current direction, free margin, and scaling-depth limits
+\IF{$m_t[a_t]=0$}
+    \STATE Set executed action $\tilde{a}_t \leftarrow \texttt{HOLD}$ and raise constraint-violation flag
+\ELSE
+    \STATE Set $\tilde{a}_t \leftarrow a_t$
+\ENDIF
+\STATE Perform pre-trade feasibility checks for $\tilde{a}_t$ (margin and leverage)
+\IF{pre-trade feasibility fails}
+    \STATE Set $\tilde{a}_t \leftarrow \texttt{HOLD}$ and raise constraint-violation flag
+\ENDIF
+\STATE Set base execution anchor $p_{\mathrm{base}} \leftarrow \mathrm{open}_{t+1}$
+\STATE Apply spread adjustment to obtain side-aware quoted price
+\STATE Apply deterministic slippage to obtain final fill price $p_{\mathrm{fill}}$
+\STATE Execute action semantics for $\tilde{a}_t$ (open, scale, reduce, close, reverse, or hold)
+\STATE Deduct commissions from cash according to traded volume
+\IF{timestamp equals rollover time (22:00 UTC)}
+    \STATE Apply rollover financing (triple rollover on Wednesday)
+\ENDIF
+\STATE Mark open positions to $\mathrm{close}_{t+1}$ and update unrealized and realized PnL
+\STATE Update cash, equity, used/free margin, utilization ratio, and drawdown statistics
+\IF{equity below liquidation threshold \textbf{or} maintenance-margin rule violated}
+    \STATE Force-liquidate all open positions using configured liquidation convention
+    \STATE Set liquidation event flag and apply liquidation accounting effects
+\ENDIF
+\STATE Construct and return $P_{t+1}$ with per-step diagnostic traces
+\end{algorithmic}
+\end{algorithm}

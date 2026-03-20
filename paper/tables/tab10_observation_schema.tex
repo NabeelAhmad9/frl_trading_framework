@@ -1,0 +1,19 @@
+\begin{table}[!tbp]
+\centering
+\caption{Observation schema and dimensions used by the Gymnasium environment.}
+\label{tab:obs_schema}
+
+\begin{adjustbox}{width=\linewidth}
+\begin{tabularx}{\linewidth}{@{}l l X@{}}
+\toprule
+\textbf{Field} & \textbf{Shape} & \textbf{Role} \\
+\midrule
+\texttt{market} & $[L, d_{\mathrm{feat}}]$ & Rolling market-feature window ($L=24$) \\
+\texttt{portfolio} & $[d_{\mathrm{port}}]$ & Normalized account state ($d_{\mathrm{port}}=10$) \\
+\texttt{mask} & $[n_a]$ & Legal-action mask ($n_a\in\{3,10\}$) \\
+\texttt{flat} & $[L d_{\mathrm{feat}} + d_{\mathrm{port}} + n_a]$ & Flattened vector for MLP agents \\
+\bottomrule
+\end{tabularx}
+\end{adjustbox}
+\end{table}
+

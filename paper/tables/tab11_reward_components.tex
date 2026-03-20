@@ -1,0 +1,27 @@
+\begin{table*}[!tbp]
+\centering
+\caption{Reward component definitions, baseline weights, and intended behavioral effect.}
+\label{tab:reward_components}
+
+\begin{adjustbox}{width=\linewidth}
+\begin{tabular}{l r p{4.2cm} p{6.2cm}}
+\toprule
+\textbf{Component} & \textbf{Weight} & \textbf{Primary purpose} & \textbf{Typical trigger / penalty form} \\
+\midrule
+Profit (post-cost) & 1.00 & Core economic learning signal & Step-wise post-cost equity return \\
+Holding incentive & 0.03 & Encourage controlled profitable holding & Small bonus when position remains profitable under low drawdown \\
+Volatility penalty & 0.01 & Discourage unstable equity trajectories & Negative term proportional to short-horizon equity-return volatility \\
+Drawdown penalty & 0.05 & Penalize increasing downside risk & Incremental drawdown penalty with stronger regime beyond severe drawdown threshold \\
+Transaction burden & 0.10 & Reduce excessive cost-churning behavior & Cost-normalized penalty for spread, slippage, commission, and rollover \\
+Overtrading penalty & 0.02 & Suppress unnecessary action frequency & Bounded penalty tied to elevated local trade frequency \\
+Pyramiding penalty & 0.05 & Constrain winner-adding aggressiveness & Depth-aware penalty for additional pyramid levels \\
+Martingale penalty & 0.12 & Strongly discourage loss-amplifying averaging down & Depth-aware penalty with larger coefficient than pyramiding \\
+Margin-utilization penalty & 0.05 & Avoid extreme leverage usage before liquidation & Nonlinear penalty when utilization exceeds conservative threshold \\
+Liquidation penalty & 2.00 & Impose catastrophic-event aversion & Large penalty on forced liquidation event \\
+Constraint-violation penalty & 0.10 & Deter illegal action proposals & Penalty when policy attempts an invalid action \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table*}
+
+

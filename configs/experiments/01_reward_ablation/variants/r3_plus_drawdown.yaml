@@ -1,0 +1,23 @@
+# Profit + transaction + drawdown penalty
+reward:
+  components:
+    profit:
+      enabled: true
+    holding:
+      enabled: false
+    volatility:
+      enabled: false
+    drawdown:
+      enabled: true
+    transaction:
+      enabled: true
+    overtrading:
+      enabled: false
+    scaling:
+      enabled: false
+    margin:
+      enabled: false
+    liquidation:
+      enabled: false
+    constraint_violation:
+      enabled: false

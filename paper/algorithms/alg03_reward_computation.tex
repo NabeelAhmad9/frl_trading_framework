@@ -1,0 +1,25 @@
+\begin{algorithm}[!tbp]
+\caption{Per-step compositional reward computation.}
+\label{alg:reward_computation}
+\begin{algorithmic}[1]
+\STATE \textbf{Input:} transition trace $\tau_t$, component enable switches $g_i \in \{0,1\}$,
+\STATE \hspace*{1em} weights $w_i$, clipping bounds $[r_{\min},r_{\max}]$
+\STATE \textbf{Output:} clipped reward $r_t$ and component log dictionary $\mathcal{L}_t$
+\STATE Define fixed component order:
+\STATE \hspace{1em}profit, holding, volatility, drawdown, transaction, overtrading,
+\STATE \hspace{1em}pyramiding, martingale, margin-utilization, liquidation, constraint-violation
+\FOR{each component $i$ in the fixed order}
+    \IF{$g_i=1$}
+        \STATE Compute component value $c_i(\tau_t)$
+    \ELSE
+        \STATE Set $c_i(\tau_t) \leftarrow 0$
+    \ENDIF
+    \STATE Compute weighted term $u_i \leftarrow w_i\,c_i(\tau_t)$
+    \STATE Append $(c_i,w_i,u_i,g_i)$ to $\mathcal{L}_t$
+\ENDFOR
+\STATE Compute raw reward $r_t^{\mathrm{raw}} \leftarrow \sum_i u_i$
+\STATE Compute clipped reward $r_t \leftarrow \mathrm{clip}(r_t^{\mathrm{raw}}, r_{\min}, r_{\max})$
+\STATE Append $(r_t^{\mathrm{raw}}, r_t, \mathbb{1}[r_t^{\mathrm{raw}} \neq r_t])$ to $\mathcal{L}_t$
+\STATE Return $(r_t,\mathcal{L}_t)$
+\end{algorithmic}
+\end{algorithm}

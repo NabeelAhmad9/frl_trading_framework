@@ -1,0 +1,12 @@
+experiment:
+  name: 04_transaction_cost_robustness
+  description: Assess fragility under higher transaction costs
+  base_pair: EURUSD
+  base_agent: doubledqn
+  base_config_refs:
+    - configs/base/data.yaml
+    - configs/base/environment.yaml
+    - configs/base/reward.yaml
+    - configs/base/training.yaml
+    - configs/agents/doubledqn.yaml
+  variant_dir: variants

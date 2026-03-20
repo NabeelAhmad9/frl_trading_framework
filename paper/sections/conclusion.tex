@@ -1,0 +1,18 @@
+\section{Conclusion}
+\label{sec:conclusion}
+
+This paper presents a modular and reproducible framework for reinforcement learning-based Forex trading, centered on three design priorities: economic realism, temporal causality, and auditability. The framework combines anti-lookahead execution semantics, friction-aware portfolio accounting, decomposable reward modeling, and legal-action masking within a unified DQN-family training pipeline.
+
+\paragraph{Summary of principal findings.}
+Controlled experiments on EURUSD training artifacts yield three main outcomes (see Section~\ref{sec:experiments} for canonical seeding and setup):
+\begin{enumerate}[leftmargin=1.8em]
+    \item \textbf{Reward interactions are non-monotone.} Progressive reward composition (\variant{r1}--\variant{r7}) does not produce linear improvement. The full specification (\variant{r7}) attains the strongest endpoint profile (Sharpe $0.765$, cumulative return $57.09\%$), while intermediate variants exhibit both gains and regressions.
+    \item \textbf{Action granularity induces a measurable trade-off.} The extended 10-action interface increases cumulative return and turnover, whereas the simplified 3-action adapter yields stronger conservative risk summaries (higher Sharpe and lower drawdown) in the same endpoint view.
+    \item \textbf{Scaling materially improves over no scaling.} All scaling-enabled settings outperform the no-scaling baseline on drawdown. The combined configuration (\variant{s4}) achieves the best endpoint return in this artifact view, while martingale-only (\variant{s3}) attains the lowest drawdown among scaling-enabled variants.
+\end{enumerate}
+
+\paragraph{Contributions revisited.}
+The core contribution is infrastructural: a research workflow in which reward decomposition, legality constraints, and anti-lookahead execution are encoded as enforceable system properties rather than informal conventions. This design improves reproducibility, supports component-level ablation, and enables more transparent diagnosis of trading-policy behavior.
+
+\paragraph{Outlook.}
+As detailed in \Cref{sec:future_work}, the next stage is to combine multi-seed uncertainty quantification, broader algorithmic baselines, and deployment-grade execution modeling. These extensions are necessary to convert controlled training evidence into robust out-of-sample and operational claims.
